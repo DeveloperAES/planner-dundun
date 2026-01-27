@@ -7,6 +7,7 @@ export default function LoginPage() {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -39,10 +40,15 @@ export default function LoginPage() {
                         Planner Dun Dun salidas <span className="text-purple-600">💕</span>
                     </h1>
                     <p className="text-gray-500 text-center mb-10 max-w-xs">
-                        Para soñar planes y no olvidar cumplirlos juntos.
+                        Organiza tus planes, viaja y construye recuerdos juntos.
                     </p>
 
                     <form onSubmit={handleLogin} className="w-full space-y-4">
+                        {error && (
+                            <div className="bg-red-50 text-red-500 p-3 rounded-xl text-sm text-center font-medium animate-pulse">
+                                {error}
+                            </div>
+                        )}
                         <div className="group">
                             <input
                                 type="email"

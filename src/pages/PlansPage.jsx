@@ -6,15 +6,27 @@ import PlanCard from "../components/PlanCard";
 export default function PlansPage() {
     const { user } = useAuth();
     const [plans, setPlans] = useState([]);
+    const [loadingPlans, setLoadingPlans] = useState(true);
 
     useEffect(() => {
         if (!user) return;
         const loadPlans = async () => {
+            setLoadingPlans(true);
             const data = await getPlansByCouple(user.coupleId);
             setPlans(data);
+            setLoadingPlans(false);
         };
         loadPlans();
     }, [user]);
+
+    if (loadingPlans) return (
+        <div className="h-screen flex items-center justify-center">
+            <div className="w-10 h-10 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+        </div>
+    );
+
+
+    console.log('MIrar planes cargados', plans);
 
     // Mock data for "In Progress" or visual variety if empty
     const displayPlans = plans.length > 0 ? plans : [

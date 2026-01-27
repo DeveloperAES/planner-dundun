@@ -5,6 +5,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import MobileLayout from "./components/MobileLayout";
 import ProfilePage from "./pages/ProfilePage";
 import AddPlanPage from "./pages/AddPlanPage";
+import PlanDetailsPage from "./pages/PlanDetailsPage";
+
 
 
 
@@ -21,6 +23,7 @@ function App() {
               <MobileLayout>
                 <Routes>
                   <Route path="/planes" element={<PlansPage />} />
+                  <Route path="/planes/:id" element={<PlanDetailsPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/add" element={<AddPlanPage />} />
                   {/* Redirect unknown routes to planes within the app */}
