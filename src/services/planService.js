@@ -41,6 +41,8 @@ export const createPlan = async (plan) => {
     const docRef = await addDoc(collection(db, "plans"), {
         ...plan,
         status: "pending",
+        category: plan.category || "date",
+        completedAt: null,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
     });
@@ -56,4 +58,35 @@ export const addPlanImages = async (planId, images) => {
         imageUrls: arrayUnion(...images),
         updatedAt: serverTimestamp(),
     });
+};
+
+export const removePlanImage = async (planId, imageUrl) => {
+    const planRef = doc(db, "plans", planId);
+    const planSnap = await getDoc(planRef);
+
+    if (planSnap.exists()) {
+        const currentImages = planSnap.data().imageUrls || [];
+        const updatedImages = currentImages.filter(url => url !== imageUrl);
+
+        await updateDoc(planRef, {
+            imageUrls: updatedImages,
+            updatedAt: serverTimestamp(),
+        });
+    }
+};
+
+export const updatePlanStatus = async (planId, newStatus) => {
+    const planRef = doc(db, "plans", planId);
+
+    const updateData = {
+        status: newStatus,
+        updatedAt: serverTimestamp(),
+    };
+
+    // Add completedAt timestamp when marking as completed
+    if (newStatus === 'completed') {
+        updateData.completedAt = serverTimestamp();
+    }
+
+    await updateDoc(planRef, updateData);
 };

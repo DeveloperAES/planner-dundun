@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { createPlan, addPlanImages } from "../services/planService";
 import { uploadFile } from "../services/storageService";
+import { CATEGORIES } from "../constants/categories";
 
 export default function AddPlanPage() {
     const { user } = useAuth();
@@ -14,6 +15,7 @@ export default function AddPlanPage() {
     const [description, setDescription] = useState("");
     const [address, setAddress] = useState("");
     const [date, setDate] = useState("");
+    const [category, setCategory] = useState("date");
     const [files, setFiles] = useState([]);
     const [previews, setPreviews] = useState([]);
 
@@ -48,6 +50,7 @@ export default function AddPlanPage() {
                 address,
                 date,
                 imageUrls,
+                category,
                 coupleId: user.coupleId,
                 createdBy: user.uid
             });
@@ -103,6 +106,26 @@ export default function AddPlanPage() {
                         onChange={(e) => setDate(e.target.value)}
                         required
                     />
+                </div>
+
+                <div className="space-y-1">
+                    <label className="text-sm font-semibold text-gray-600 ml-1">Categoría</label>
+                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                        {CATEGORIES.map((cat) => (
+                            <button
+                                key={cat.id}
+                                type="button"
+                                onClick={() => setCategory(cat.id)}
+                                className={`flex-shrink-0 px-4 py-3 rounded-xl font-medium text-sm transition-all flex items-center gap-2 ${category === cat.id
+                                        ? `${cat.bgClass} ${cat.textClass} border-2 ${cat.borderClass} shadow-sm`
+                                        : 'bg-gray-50 text-gray-600 border-2 border-transparent'
+                                    }`}
+                            >
+                                <span className="text-lg">{cat.icon}</span>
+                                <span>{cat.name}</span>
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="space-y-1">
