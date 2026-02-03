@@ -117,8 +117,8 @@ export default function AddPlanPage() {
                                 type="button"
                                 onClick={() => setCategory(cat.id)}
                                 className={`flex-shrink-0 px-4 py-3 rounded-xl font-medium text-sm transition-all flex items-center gap-2 ${category === cat.id
-                                        ? `${cat.bgClass} ${cat.textClass} border-2 ${cat.borderClass} shadow-sm`
-                                        : 'bg-gray-50 text-gray-600 border-2 border-transparent'
+                                    ? `${cat.bgClass} ${cat.textClass} border-2 ${cat.borderClass} shadow-sm`
+                                    : 'bg-gray-50 text-gray-600 border-2 border-transparent'
                                     }`}
                             >
                                 <span className="text-lg">{cat.icon}</span>

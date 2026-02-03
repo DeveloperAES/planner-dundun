@@ -2,38 +2,78 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { getPlansByCouple } from "../services/planService";
 import PlanCard from "../components/PlanCard";
+import { CATEGORIES } from "../constants/categories";
 
 export default function PlansPage() {
+    // Auth
     const { user } = useAuth();
+
+    // Data state
     const [plans, setPlans] = useState([]);
     const [loadingPlans, setLoadingPlans] = useState(true);
 
+    // Filter state
+    const [selectedCategory, setSelectedCategory] = useState("all");
+    const [selectedStatus, setSelectedStatus] = useState("all");
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const PLANS_PER_PAGE = 6;
+
+    // Load plans
     useEffect(() => {
         if (!user) return;
+
         const loadPlans = async () => {
             setLoadingPlans(true);
             const data = await getPlansByCouple(user.coupleId);
             setPlans(data);
             setLoadingPlans(false);
         };
+
         loadPlans();
     }, [user]);
 
-    if (loadingPlans) return (
-        <div className="h-screen flex items-center justify-center">
-            <div className="w-10 h-10 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
-        </div>
+    // Reset pagination when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedCategory, selectedStatus]);
+
+    // Fallback (no mock data anymore)
+    const displayPlans = plans.length > 0 ? plans : [];
+
+    // Filter logic
+    const filteredPlans = displayPlans.filter(plan => {
+        const categoryMatch =
+            selectedCategory === "all" || plan.category === selectedCategory;
+        const statusMatch =
+            selectedStatus === "all" || plan.status === selectedStatus;
+        return categoryMatch && statusMatch;
+    });
+
+    // Pagination logic
+    const totalPages = Math.ceil(filteredPlans.length / PLANS_PER_PAGE);
+    const startIndex = (currentPage - 1) * PLANS_PER_PAGE;
+    const endIndex = startIndex + PLANS_PER_PAGE;
+    const paginatedPlans = filteredPlans.slice(startIndex, endIndex);
+    const hasMore = currentPage < totalPages;
+
+    // Count helpers
+    const getCategoryCount = (categoryId) => {
+        if (categoryId === "all") return displayPlans.length;
+        return displayPlans.filter(p => p.category === categoryId).length;
+    };
+
+    const getStatusCount = (status) => {
+        if (status === "all") return displayPlans.length;
+        return displayPlans.filter(p => p.status === status).length;
+    };
+
+    console.log("Mirar planes cargados", plans);
+
+    const inProgressPlans = plans.filter(
+        plan => plan.status === "in-progress"
     );
 
-
-    console.log('MIrar planes cargados', plans);
-
-    // Mock data for "In Progress" or visual variety if empty
-    const displayPlans = plans.length > 0 ? plans : [
-        { id: 1, title: 'Cena Romántica', description: 'Restaurante italiano', status: 'pending' },
-        { id: 2, title: 'Viaje a la Playa', description: 'Fin de semana', status: 'in-progress' },
-        { id: 3, title: 'Comprar regalos', description: 'Para navidad', status: 'completed' },
-    ];
 
     return (
         <div className="p-6">
@@ -79,45 +119,118 @@ export default function PlansPage() {
                 <h3 className="text-xl font-bold text-gray-800">En Progreso 📌</h3>
             </div>
 
-            {/* Horizontal Scroll / Cards */}
+
+            {/* Horizontal Scroll / Cards - Removed mock data */}
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide mb-2">
-                {/* Mock "In Progress" Card */}
-                <div className="min-w-[200px] bg-blue-50 p-4 rounded-2xl">
-                    <div className="flex justify-between mb-2">
-                        <span className="bg-white p-2 rounded-lg text-blue-500">🏖️</span>
-                        <span className="text-gray-400 text-xs">2d left</span>
-                    </div>
-                    <h4 className="font-bold text-gray-700 mb-1">Viaje a la Playa</h4>
-                    <p className="text-xs text-gray-500 mb-3">Preparar maletas</p>
-                    <div className="w-full bg-blue-200 h-1.5 rounded-full overflow-hidden">
-                        <div className="bg-blue-500 h-full w-2/3"></div>
-                    </div>
-                </div>
-                <div className="min-w-[200px] bg-orange-50 p-4 rounded-2xl">
-                    <div className="flex justify-between mb-2">
-                        <span className="bg-white p-2 rounded-lg text-orange-500">🎁</span>
-                        <span className="text-gray-400 text-xs">5d left</span>
-                    </div>
-                    <h4 className="font-bold text-gray-700 mb-1">Regalo Aniversario</h4>
-                    <p className="text-xs text-gray-500 mb-3">Comprar online</p>
-                    <div className="w-full bg-orange-200 h-1.5 rounded-full overflow-hidden">
-                        <div className="bg-orange-500 h-full w-1/3"></div>
-                    </div>
-                </div>
+                {inProgressPlans.length > 0 ? (
+                    inProgressPlans.map(plan => (
+                        <div
+                            key={plan.id}
+                            className="min-w-[200px] bg-blue-50 p-4 rounded-2xl"
+                        >
+                            <div className="flex justify-between mb-2">
+                                <span className="bg-white p-2 rounded-lg text-blue-500">
+                                    📌
+                                </span>
+                                <span className="text-gray-400 text-xs">
+                                    En progreso
+                                </span>
+                            </div>
+
+                            <h4 className="font-bold text-gray-700 mb-1">
+                                {plan.title}
+                            </h4>
+
+                            <p className="text-xs text-gray-500 mb-3">
+                                {plan.description || "Sin descripción"}
+                            </p>
+
+                            <div className="w-full bg-blue-200 h-1.5 rounded-full overflow-hidden">
+                                <div className="bg-blue-500 h-full w-2/3"></div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p className="text-gray-400 text-sm">
+                        No hay planes en progreso 🚧
+                    </p>
+                )}
             </div>
 
 
-            {/* Task Groups / List */}
+
+
+
+            {/* Category Filter - Moved */}
+            <div className="mb-4">
+                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    <button
+                        onClick={() => setSelectedCategory('all')}
+                        className={`shrink-0 px-4 py-2 rounded-xl font-medium text-sm transition-all ${selectedCategory === 'all'
+                            ? 'bg-purple-600 text-white shadow-md'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                    >
+                        <span className="text-lg">♾️</span> <span className="ml-1 opacity-75">({getCategoryCount('all')})</span>
+                    </button>
+                    {CATEGORIES.map((cat) => (
+                        <button
+                            key={cat.id}
+                            onClick={() => setSelectedCategory(cat.id)}
+                            className={`shrink-0 px-4 py-2 rounded-xl font-medium text-sm transition-all flex items-center gap-2 ${selectedCategory === cat.id
+                                ? `${cat.bgClass} ${cat.textClass} border-2 ${cat.borderClass} shadow-sm`
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                }`}
+                        >
+                            <span className="text-lg">{cat.icon} {cat.name}</span>
+                            <span className="opacity-75">({getCategoryCount(cat.id)})</span>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
             <div className="flex justify-between items-center mb-4 mt-4">
-                <h3 className="text-xl font-bold text-gray-800">Todos los planes 📋</h3>
-                <span className="bg-purple-100 text-purple-600 text-xs font-bold px-2 py-1 rounded-lg">{displayPlans.length}</span>
+                <h3 className="text-xl font-bold text-gray-800">
+                    {selectedCategory === 'all' && selectedStatus === 'all' ? 'Todos los planes' : 'Resultados'} 📋
+                </h3>
+                <span className="bg-purple-100 text-purple-600 text-xs font-bold px-2 py-1 rounded-lg">
+                    {filteredPlans.length}
+                </span>
             </div>
 
             <div>
-                {displayPlans.map((plan, i) => (
-                    <PlanCard key={plan.id || i} plan={plan} />
-                ))}
+                {paginatedPlans.length > 0 ? (
+                    paginatedPlans.map((plan, i) => (
+                        <PlanCard key={plan.id || i} plan={plan} />
+                    ))
+                ) : (
+                    <div className="text-center py-12 bg-gray-50 rounded-2xl">
+                        <div className="text-6xl mb-4 opacity-50">📭</div>
+                        <p className="text-gray-400 font-medium mb-2">No hay planes con estos filtros</p>
+                        <button
+                            onClick={() => {
+                                setSelectedCategory('all');
+                                setSelectedStatus('all');
+                            }}
+                            className="text-purple-600 text-sm font-semibold hover:underline"
+                        >
+                            Limpiar filtros
+                        </button>
+                    </div>
+                )}
             </div>
+
+            {/* Pagination Controls */}
+            {hasMore && paginatedPlans.length > 0 && (
+                <div className="mt-6 flex justify-center">
+                    <button
+                        onClick={() => setCurrentPage(page => page + 1)}
+                        className="px-6 py-3 bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 transition-colors shadow-md"
+                    >
+                        Cargar más ({filteredPlans.length - endIndex} restantes)
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
