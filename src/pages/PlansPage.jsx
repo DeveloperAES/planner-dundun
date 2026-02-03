@@ -45,8 +45,18 @@ export default function PlansPage() {
     const filteredPlans = displayPlans.filter(plan => {
         const categoryMatch =
             selectedCategory === "all" || plan.category === selectedCategory;
-        const statusMatch =
-            selectedStatus === "all" || plan.status === selectedStatus;
+
+        let statusMatch = true;
+        if (selectedStatus === "ideas") {
+            statusMatch = !plan.date;
+        } else if (selectedStatus !== "all") {
+            // For pending/completed, usually implies it has a date (is a real plan), 
+            // but we can just filter by status. However, to keep "Ideas" separate, 
+            // maybe "Pending" should only show scheduled? 
+            // Let's decide: Pending = Scheduled Pending. Ideas = No Date.
+            statusMatch = plan.status === selectedStatus && !!plan.date;
+        }
+
         return categoryMatch && statusMatch;
     });
 
@@ -65,7 +75,8 @@ export default function PlansPage() {
 
     const getStatusCount = (status) => {
         if (status === "all") return displayPlans.length;
-        return displayPlans.filter(p => p.status === status).length;
+        if (status === "ideas") return displayPlans.filter(p => !p.date).length;
+        return displayPlans.filter(p => p.status === status && p.date).length;
     };
 
     console.log("Mirar planes cargados", plans);
@@ -160,6 +171,39 @@ export default function PlansPage() {
 
 
 
+
+            {/* Status Tabs (Re-added for Ideas) */}
+            <div className="mb-4">
+                <div className="flex gap-2 border-b border-gray-200 overflow-x-auto scrollbar-hide">
+                    <button
+                        onClick={() => setSelectedStatus('all')}
+                        className={`whitespace-nowrap px-4 py-2 font-medium text-sm transition-all border-b-2 ${selectedStatus === 'all'
+                            ? 'border-purple-600 text-purple-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                            }`}
+                    >
+                        Todos ({getStatusCount('all')})
+                    </button>
+                    <button
+                        onClick={() => setSelectedStatus('ideas')}
+                        className={`whitespace-nowrap px-4 py-2 font-medium text-sm transition-all border-b-2 ${selectedStatus === 'ideas'
+                            ? 'border-yellow-500 text-yellow-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                            }`}
+                    >
+                        Ideas 💡 ({getStatusCount('ideas')})
+                    </button>
+                    <button
+                        onClick={() => setSelectedStatus('pending')}
+                        className={`whitespace-nowrap px-4 py-2 font-medium text-sm transition-all border-b-2 ${selectedStatus === 'pending'
+                            ? 'border-purple-600 text-purple-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                            }`}
+                    >
+                        Agenda ({getStatusCount('pending')})
+                    </button>
+                </div>
+            </div>
 
             {/* Category Filter - Moved */}
             <div className="mb-4">

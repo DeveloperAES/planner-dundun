@@ -213,6 +213,16 @@ export default function PlanDetailsPage() {
                     </div>
                 )}
 
+                {plan.budget && (
+                    <div className="bg-green-50 p-4 rounded-2xl flex items-center gap-3 border border-green-100">
+                        <div className="bg-white p-2 rounded-lg text-green-600 shadow-sm text-lg">💰</div>
+                        <div>
+                            <p className="text-xs text-green-600/70 font-bold uppercase tracking-wider">Presupuesto Estimado</p>
+                            <p className="text-green-800 font-bold text-lg">S/. {plan.budget}</p>
+                        </div>
+                    </div>
+                )}
+
                 <div>
                     <h3 className="text-lg font-bold text-gray-800 mb-2">Descripción</h3>
                     <p className="text-gray-600 leading-relaxed bg-gray-50 p-4 rounded-2xl">

@@ -15,6 +15,7 @@ export default function AddPlanPage() {
     const [description, setDescription] = useState("");
     const [address, setAddress] = useState("");
     const [date, setDate] = useState("");
+    const [budget, setBudget] = useState("");
     const [category, setCategory] = useState("date");
     const [files, setFiles] = useState([]);
     const [previews, setPreviews] = useState([]);
@@ -30,7 +31,7 @@ export default function AddPlanPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!title || !date) return alert("Por favor completa los campos requeridos");
+        if (!title) return alert("Por favor completa el título");
 
         setLoading(true);
         try {
@@ -49,6 +50,7 @@ export default function AddPlanPage() {
                 description,
                 address,
                 date,
+                budget,
                 imageUrls,
                 category,
                 coupleId: user.coupleId,
@@ -98,14 +100,27 @@ export default function AddPlanPage() {
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-sm font-semibold text-gray-600 ml-1">Fecha</label>
+                    <label className="text-sm font-semibold text-gray-600 ml-1">Fecha <span className="text-xs font-normal text-gray-400">(Opcional - Guardar como Idea)</span></label>
                     <input
                         type="datetime-local"
                         className="w-full bg-white p-4 rounded-2xl border border-gray-100 shadow-sm focus:ring-2 focus:ring-purple-200 outline-none transition-all text-gray-600"
                         value={date}
                         onChange={(e) => setDate(e.target.value)}
-                        required
                     />
+                </div>
+
+                <div className="space-y-1">
+                    <label className="text-sm font-semibold text-gray-600 ml-1">Presupuesto Estimado</label>
+                    <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">S/.</span>
+                        <input
+                            type="number"
+                            placeholder="0.00"
+                            className="w-full bg-white p-4 pl-12 rounded-2xl border border-gray-100 shadow-sm focus:ring-2 focus:ring-purple-200 outline-none transition-all"
+                            value={budget}
+                            onChange={(e) => setBudget(e.target.value)}
+                        />
+                    </div>
                 </div>
 
                 <div className="space-y-1">
