@@ -22,8 +22,8 @@ export default function BottomNav() {
             ), special: true
         },
         {
-            path: "/docs", icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /></svg>
+            path: "/coupons", icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" /><path d="M13 5v2" /><path d="M13 17v2" /><path d="M13 11v2" /></svg>
             )
         },
         {
@@ -40,8 +40,8 @@ export default function BottomNav() {
                     key={index}
                     to={item.path}
                     className={`flex items-center justify-center transition-all duration-300 ${item.special
-                            ? "bg-purple-600 text-white w-12 h-12 rounded-full -mt-8 shadow-lg shadow-purple-300 transform hover:scale-105"
-                            : isActive(item.path) ? "text-purple-600" : "text-gray-400 hover:text-purple-400"
+                        ? "bg-purple-600 text-white w-12 h-12 rounded-full -mt-8 shadow-lg shadow-purple-300 transform hover:scale-105"
+                        : isActive(item.path) ? "text-purple-600" : "text-gray-400 hover:text-purple-400"
                         }`}
                 >
                     {item.icon}

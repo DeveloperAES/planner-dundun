@@ -6,6 +6,8 @@ import MobileLayout from "./components/MobileLayout";
 import ProfilePage from "./pages/ProfilePage";
 import AddPlanPage from "./pages/AddPlanPage";
 import PlanDetailsPage from "./pages/PlanDetailsPage";
+import CouponsPage from "./pages/CouponsPage";
+import AddCouponPage from "./pages/AddCouponPage";
 
 
 
@@ -26,6 +28,8 @@ function App() {
                   <Route path="/planes/:id" element={<PlanDetailsPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/add" element={<AddPlanPage />} />
+                  <Route path="/coupons" element={<CouponsPage />} />
+                  <Route path="/coupons/add" element={<AddCouponPage />} />
                   {/* Redirect unknown routes to planes within the app */}
                   <Route path="*" element={<Navigate to="/planes" />} />
                 </Routes>
